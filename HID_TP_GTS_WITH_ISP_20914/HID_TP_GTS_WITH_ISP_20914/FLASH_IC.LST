@@ -1,0 +1,106 @@
+C51 COMPILER V9.52.0.0   FLASH_IC                                                          10/23/2017 14:51:55 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE FLASH_IC
+OBJECT MODULE PLACED IN FLASH_IC.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE FLASH_IC.C LARGE BROWSE DEBUG OBJECTEXTEND PREPRINT
+
+line level    source
+
+   1          /********************************** (C) COPYRIGHT *******************************
+   2          * File Name          : FLASH_IC.C
+   3          * Author             : MJX
+   4          * Version            : V1.00
+   5          * Date               : 2017/04/27
+   6          * Description        : FLASH Read
+   7          *******************************************************************************/
+   8          
+   9          
+  10          
+  11          /*******************************************************************************
+  12          * configure information:
+  13          * Name                  Address                 Data
+  14          * x_resolution  0xc000 0xc002
+  15          * y_resolution  0xc004 0xc006
+  16          * x_mirror              0xc000 bit7
+  17          * y_mirror          0xc004 bit7
+  18          *******************************************************************************/
+  19          
+  20          /******************************************************************************/
+  21          /* 头文件包含 */
+  22          #include "intrins.h"
+  23          #include <stdio.h>
+  24          #include "CH554.H"                                                                                                                              
+  25          #include "DEBUG.H"
+  26          #include "FLASH_IC.H"
+  27          #include "GT911.H"
+  28          
+  29          UINT8 Flash_Data[FLASH_DATA_LEN-1];
+  30          /* Get flash info */
+  31          UINT8 Get_Config_Info( void )                   
+  32          {
+  33   1              UINT8 i;
+  34   1          ROM_ADDR_H = DATA_FLASH_ADDR >> 8;
+  35   1          
+  36   1          for(i=0; i<FLASH_DATA_LEN; i++)
+  37   1              {
+  38   2                      ROM_ADDR_L = i*2;                                                 
+  39   2                      ROM_CTRL = ROM_CMD_READ;
+  40   2      //     if ( ROM_STATUS & bROM_CMD_ERR ) return( 0xFF );                        // unknown command
+  41   2                      *(Flash_Data+i) = ROM_DATA_L;
+  42   2              
+  43   2              }
+  44   1      #if 0
+                      for(i=0; i<FLASH_DATA_LEN; i++)
+                      {
+                              printf("%02x\t",(UINT16)Flash_Data[i]);
+                      }
+                      printf("\n");
+              #endif 
+  51   1              
+  52   1      //      if( ( Flash_Data[0] == 0x00 )||( Flash_Data[0]==0xff ) )                                                                        /* default config info */
+  53   1      //      {
+  54   1      //              FT5206_Info.x_max_pos = 1024;
+  55   1      //              FT5206_Info.y_max_pos = 800;
+C51 COMPILER V9.52.0.0   FLASH_IC                                                          10/23/2017 14:51:55 PAGE 2   
+
+  56   1      //              FT5206_Info.x_mirror = 0;
+  57   1      //              FT5206_Info.y_mirror = 0;
+  58   1      //              return 0;
+  59   1      //      }
+  60   1      //      else
+  61   1              {
+  62   2                      if( ( Flash_Data[0]&0x80 )!= 0 ) 
+  63   2                      {
+  64   3                              GT911_Info.x_mirror = 1;
+  65   3                              Flash_Data[0] &= ~0x7F;
+  66   3                      }
+  67   2                      if( ( Flash_Data[2]&0x80 )!= 0 ) 
+  68   2                      {
+  69   3                              GT911_Info.y_mirror = 1;
+  70   3                              Flash_Data[2] &= ~0x7F;
+  71   3                      }
+  72   2                      
+  73   2                      GT911_Info.x_max_pos = ( Flash_Data[0]<<8 ) + Flash_Data[1];
+  74   2                      GT911_Info.y_max_pos = ( Flash_Data[2]<<8 ) + Flash_Data[3];
+  75   2                      
+  76   2                      GT911_Info.x_y_swap = ( Flash_Data[4] == 0x01) ? 1 : 0;
+  77   2      
+  78   2                      return 1;
+  79   2              }
+  80   1      }
+  81          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    134    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      4    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

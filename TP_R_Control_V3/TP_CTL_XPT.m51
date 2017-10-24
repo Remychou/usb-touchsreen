@@ -1,0 +1,463 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/10/2017  14:06:31  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE .\obj\DEBUG.obj, .\obj\DEVICE.obj, .\obj\main.obj, .\obj\XPT2046.obj TO .\obj\TP_CTL_XPT PRINT 
+>> (.\TP_CTL_XPT.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\obj\DEBUG.obj (DEBUG)
+  .\obj\DEVICE.obj (DEVICE)
+  .\obj\main.obj (MAIN)
+  .\obj\XPT2046.obj (XPT2046)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?UIDIV)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?ULDIV)
+
+
+LINK MAP OF MODULE:  .\obj\TP_CTL_XPT (DEBUG)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0006H     UNIT         _DATA_GROUP_
+            DATA    000EH     0004H     UNIT         ?DT?MAIN
+            DATA    0012H     0002H     UNIT         ?DT?DEBUG
+            IDATA   0014H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     019AH     UNIT         ?PR?MAIN?MAIN
+            CODE    019DH     0123H     UNIT         ?C?LIB_CODE
+            CODE    02C0H     0088H     UNIT         ?PR?_XPT2046_READDATA?XPT2046
+            CODE    0348H     0074H     UNIT         ?PR?MINITSTDIO?DEBUG
+            CODE    03BCH     0039H     UNIT         ?PR?_XPT2046_SENDCOMMAND?XPT2046
+            CODE    03F5H     0017H     UNIT         ?PR?_MDELAYMS?DEBUG
+            CODE    040CH     0017H     UNIT         ?PR?_CH554WDTMODESELECT?DEBUG
+            CODE    0423H     0012H     UNIT         ?PR?CFGFSYS?DEBUG
+            CODE    0435H     0010H     UNIT         ?CO?MAIN
+            CODE    0445H     000EH     UNIT         ?PR?_MDELAYUS?DEBUG
+            CODE    0453H     000CH     UNIT         ?C_C51STARTUP
+            CODE    045FH     000AH     UNIT         ?PR?UART1SETUP?DEBUG
+            CODE    0469H     0008H     UNIT         ?PR?CH554UART0RCVBYTE?DEBUG
+            CODE    0471H     0008H     UNIT         ?PR?_CH554UART0SENDBYTE?DEBUG
+            CODE    0479H     0008H     UNIT         ?PR?CH554UART1RCVBYTE?DEBUG
+            CODE    0481H     0008H     UNIT         ?PR?_CH554UART1SENDBYTE?DEBUG
+            CODE    0489H     0004H     UNIT         ?PR?CH554UART0ALTER?DEBUG
+            CODE    048DH     0003H     UNIT         ?PR?_CH554WDTFEED?DEBUG
+
+
+
+OVERLAY MAP OF MODULE:   .\obj\TP_CTL_XPT (DEBUG)
+
+
+SEGMENT                                    DATA_GROUP 
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 2
+
+
+  +--> CALLED SEGMENT                    START    LENGTH
+--------------------------------------------------------
+?C_C51STARTUP                            -----    -----
+  +--> ?PR?MAIN?MAIN
+
+?PR?MAIN?MAIN                            -----    -----
+  +--> ?PR?CFGFSYS?DEBUG
+  +--> ?PR?_MDELAYMS?DEBUG
+  +--> ?PR?MINITSTDIO?DEBUG
+  +--> ?PR?_XPT2046_READDATA?XPT2046
+  +--> ?CO?MAIN
+  +--> ?PR?_CH554UART0SENDBYTE?DEBUG
+
+?PR?_MDELAYMS?DEBUG                      -----    -----
+  +--> ?PR?_MDELAYUS?DEBUG
+
+?PR?MINITSTDIO?DEBUG                     0008H    0005H
+
+?PR?_XPT2046_READDATA?XPT2046            0008H    0004H
+  +--> ?PR?_MDELAYUS?DEBUG
+  +--> ?PR?_XPT2046_SENDCOMMAND?XPT2046
+
+?PR?_XPT2046_SENDCOMMAND?XPT2046         000CH    0002H
+  +--> ?PR?_MDELAYUS?DEBUG
+
+
+
+SYMBOL TABLE OF MODULE:  .\obj\TP_CTL_XPT (DEBUG)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        DEBUG
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  C:045FH         PUBLIC        UART1Setup
+  C:040CH         PUBLIC        _CH554WDTModeSelect
+  C:0348H         PUBLIC        mInitSTDIO
+  D:00E8H         PUBLIC        IE_EX
+  D:00A8H         PUBLIC        IE
+  C:048DH         PUBLIC        _CH554WDTFeed
+  C:0489H         PUBLIC        CH554UART0Alter
+  D:00B8H         PUBLIC        IP
+  B:0098H.0       PUBLIC        RI
+  B:0098H.1       PUBLIC        TI
+  D:00FFH         PUBLIC        WDOG_COUNT
+  D:00B9H         PUBLIC        CLOCK_CFG
+  C:03F5H         PUBLIC        _mDelaymS
+  D:00C2H         PUBLIC        SBAUD1
+  B:00C0H.0       PUBLIC        U1RI
+  B:00C0H.1       PUBLIC        U1TI
+  D:00D8H         PUBLIC        USB_INT_FG
+  C:0445H         PUBLIC        _mDelayuS
+  B:00C8H.5       PUBLIC        RCLK
+  B:00C8H.4       PUBLIC        TCLK
+  D:0099H         PUBLIC        SBUF
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 3
+
+
+  D:0087H         PUBLIC        PCON
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  C:0423H         PUBLIC        CfgFsys
+  B:00C0H.5       PUBLIC        U1SMOD
+  D:00F8H         PUBLIC        SPI0_STAT
+  C:0471H         PUBLIC        _CH554UART0SendByte
+  C:0481H         PUBLIC        _CH554UART1SendByte
+  D:0012H         PUBLIC        TH_H
+  D:0013H         PUBLIC        TH_L
+  D:008DH         PUBLIC        TH1
+  B:0098H.7       PUBLIC        SM0
+  B:0098H.6       PUBLIC        SM1
+  B:0098H.5       PUBLIC        SM2
+  B:00C0H.7       PUBLIC        U1SM0
+  B:0088H.6       PUBLIC        TR1
+  C:0469H         PUBLIC        CH554UART0RcvByte
+  C:0479H         PUBLIC        CH554UART1RcvByte
+  D:0080H         PUBLIC        ADC_CTRL
+  D:00A1H         PUBLIC        SAFE_MOD
+  D:00C1H         PUBLIC        SBUF1
+  D:00B1H         PUBLIC        GLOBAL_CFG
+  D:00C0H         PUBLIC        SCON1
+  B:0098H.4       PUBLIC        REN
+  D:00C9H         PUBLIC        T2MOD
+  D:00C8H         PUBLIC        T2CON
+  B:00C0H.4       PUBLIC        U1REN
+  D:00C6H         PUBLIC        PIN_FUNC
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          CFGFSYS
+  C:0423H         LINE#         27
+  C:0423H         LINE#         28
+  C:0423H         LINE#         33
+  C:0426H         LINE#         34
+  C:0429H         LINE#         38
+  C:0431H         LINE#         43
+  C:0434H         LINE#         44
+  -------         ENDPROC       CFGFSYS
+  -------         PROC          _MDELAYUS
+  D:0006H         SYMBOL        n
+  C:0445H         LINE#         53
+  C:0445H         LINE#         54
+  C:0445H         LINE#         66
+  C:0449H         LINE#         67
+  C:044BH         LINE#         100
+  C:0450H         LINE#         101
+  C:0452H         LINE#         102
+  -------         ENDPROC       _MDELAYUS
+  -------         PROC          _MDELAYMS
+  D:0004H         SYMBOL        n
+  C:03F5H         LINE#         111
+  C:03F9H         LINE#         112
+  C:03F9H         LINE#         113
+  C:03FDH         LINE#         118
+  C:0404H         LINE#         120
+  C:0409H         LINE#         121
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 4
+
+
+  C:040BH         LINE#         122
+  -------         ENDPROC       _MDELAYMS
+  -------         PROC          CH554UART0ALTER
+  C:0489H         LINE#         131
+  C:0489H         LINE#         132
+  C:0489H         LINE#         133
+  C:048CH         LINE#         134
+  -------         ENDPROC       CH554UART0ALTER
+  -------         PROC          MINITSTDIO
+  -------         DO            
+  D:0008H         SYMBOL        x
+  D:000CH         SYMBOL        x2
+  -------         ENDDO         
+  C:0348H         LINE#         144
+  C:0348H         LINE#         145
+  C:0348H         LINE#         149
+  C:034AH         LINE#         150
+  C:034CH         LINE#         151
+  C:034EH         LINE#         153
+  C:0350H         LINE#         154
+  C:0352H         LINE#         155
+  C:0355H         LINE#         156
+  C:035FH         LINE#         157
+  C:0373H         LINE#         158
+  C:038CH         LINE#         159
+  C:03A4H         LINE#         161
+  C:03ACH         LINE#         162
+  C:03AFH         LINE#         163
+  C:03B5H         LINE#         164
+  C:03B7H         LINE#         165
+  C:03B9H         LINE#         166
+  C:03BBH         LINE#         167
+  -------         ENDPROC       MINITSTDIO
+  -------         PROC          CH554UART0RCVBYTE
+  C:0469H         LINE#         176
+  C:0469H         LINE#         177
+  C:0469H         LINE#         178
+  C:046CH         LINE#         179
+  C:046EH         LINE#         180
+  C:0470H         LINE#         181
+  -------         ENDPROC       CH554UART0RCVBYTE
+  -------         PROC          _CH554UART0SENDBYTE
+  D:0007H         SYMBOL        SendDat
+  C:0471H         LINE#         190
+  C:0471H         LINE#         191
+  C:0471H         LINE#         192
+  C:0473H         LINE#         193
+  C:0476H         LINE#         194
+  C:0478H         LINE#         195
+  -------         ENDPROC       _CH554UART0SENDBYTE
+  -------         PROC          UART1SETUP
+  C:045FH         LINE#         204
+  C:045FH         LINE#         205
+  C:045FH         LINE#         206
+  C:0461H         LINE#         207
+  C:0463H         LINE#         208
+  C:0465H         LINE#         209
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 5
+
+
+  C:0468H         LINE#         210
+  -------         ENDPROC       UART1SETUP
+  -------         PROC          CH554UART1RCVBYTE
+  C:0479H         LINE#         219
+  C:0479H         LINE#         220
+  C:0479H         LINE#         221
+  C:047CH         LINE#         222
+  C:047EH         LINE#         223
+  C:0480H         LINE#         224
+  -------         ENDPROC       CH554UART1RCVBYTE
+  -------         PROC          _CH554UART1SENDBYTE
+  D:0007H         SYMBOL        SendDat
+  C:0481H         LINE#         233
+  C:0481H         LINE#         234
+  C:0481H         LINE#         235
+  C:0483H         LINE#         236
+  C:0486H         LINE#         237
+  C:0488H         LINE#         238
+  -------         ENDPROC       _CH554UART1SENDBYTE
+  -------         PROC          _CH554WDTMODESELECT
+  D:0007H         SYMBOL        mode
+  C:040CH         LINE#         249
+  C:040CH         LINE#         250
+  C:040CH         LINE#         251
+  C:040FH         LINE#         252
+  C:0412H         LINE#         253
+  C:0415H         LINE#         254
+  C:0418H         LINE#         255
+  C:041AH         LINE#         256
+  C:041DH         LINE#         257
+  C:0420H         LINE#         258
+  C:0422H         LINE#         259
+  -------         ENDPROC       _CH554WDTMODESELECT
+  -------         PROC          _CH554WDTFEED
+  D:0007H         SYMBOL        tim
+  C:048DH         LINE#         270
+  C:048DH         LINE#         271
+  C:048DH         LINE#         272
+  C:048FH         LINE#         273
+  -------         ENDPROC       _CH554WDTFEED
+  -------         ENDMOD        DEBUG
+
+  -------         MODULE        DEVICE
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  -------         ENDMOD        DEVICE
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  D:00E8H         PUBLIC        IE_EX
+  D:00A8H         PUBLIC        IE
+  B:00B0H.3       PUBLIC        XPT2046_PEN
+  D:00B8H         PUBLIC        IP
+  D:000EH         PUBLIC        p1
+  D:00D8H         PUBLIC        USB_INT_FG
+  C:0003H         PUBLIC        main
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 6
+
+
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00F8H         PUBLIC        SPI0_STAT
+  C:0435H         PUBLIC        ucCodeTable
+  D:0080H         PUBLIC        ADC_CTRL
+  D:00C0H         PUBLIC        SCON1
+  D:00C8H         PUBLIC        T2CON
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          MAIN
+  C:0003H         LINE#         18
+  C:0003H         LINE#         19
+  C:0003H         LINE#         21
+  C:0006H         LINE#         23
+  C:000DH         LINE#         25
+  C:0010H         LINE#         27
+  C:0010H         LINE#         28
+  C:0010H         LINE#         29
+  C:0013H         LINE#         30
+  C:0013H         LINE#         31
+  C:001AH         LINE#         32
+  C:001DH         LINE#         33
+  C:001DH         LINE#         34
+  C:0026H         LINE#         35
+  C:002FH         LINE#         38
+  C:004AH         LINE#         39
+  C:0072H         LINE#         40
+  C:009AH         LINE#         41
+  C:00C2H         LINE#         42
+  C:00DDH         LINE#         44
+  C:00E2H         LINE#         46
+  C:00FDH         LINE#         47
+  C:0125H         LINE#         48
+  C:014DH         LINE#         49
+  C:0175H         LINE#         50
+  C:0190H         LINE#         52
+  C:0195H         LINE#         53
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        XPT2046
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  B:0090H.7       PUBLIC        XPT2046_CLK
+  B:0090H.5       PUBLIC        XPT2046_DIN
+  D:00E8H         PUBLIC        IE_EX
+  D:00A8H         PUBLIC        IE
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        USB_INT_FG
+  C:02C0H         PUBLIC        _XPT2046_ReadData
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  D:00F8H         PUBLIC        SPI0_STAT
+  B:0090H.4       PUBLIC        XPT2046_CS
+  D:0080H         PUBLIC        ADC_CTRL
+  D:00C0H         PUBLIC        SCON1
+  D:00C8H         PUBLIC        T2CON
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 7
+
+
+  B:0090H.6       PUBLIC        XPT2046_DOUT
+  B:00B0H.5       PUBLIC        XPT2046_BUSY
+  D:00D0H         PUBLIC        PSW
+  C:03BCH         PUBLIC        _XPT2046_SendCommand
+  -------         PROC          _XPT2046_SENDCOMMAND
+  D:000CH         SYMBOL        ucCommand
+  -------         DO            
+  D:000DH         SYMBOL        i
+  -------         ENDDO         
+  C:03BCH         LINE#         5
+  C:03BEH         LINE#         6
+  C:03BEH         LINE#         8
+  C:03C1H         LINE#         9
+  C:03C1H         LINE#         10
+  C:03C6H         LINE#         11
+  C:03C6H         LINE#         12
+  C:03C8H         LINE#         13
+  C:03CAH         LINE#         15
+  C:03CAH         LINE#         16
+  C:03CCH         LINE#         17
+  C:03CCH         LINE#         18
+  C:03D2H         LINE#         19
+  C:03D9H         LINE#         20
+  C:03DBH         LINE#         21
+  C:03E2H         LINE#         22
+  C:03E4H         LINE#         23
+  C:03EBH         LINE#         24
+  C:03F4H         LINE#         25
+  -------         ENDPROC       _XPT2046_SENDCOMMAND
+  -------         PROC          _XPT2046_READDATA
+  D:0008H         SYMBOL        ucCommand
+  -------         DO            
+  D:0009H         SYMBOL        i
+  D:000AH         SYMBOL        uiBackValue
+  -------         ENDDO         
+  C:02C0H         LINE#         28
+  C:02C2H         LINE#         29
+  C:02C2H         LINE#         33
+  C:02C4H         LINE#         34
+  C:02CBH         LINE#         35
+  C:02CDH         LINE#         36
+  C:02D4H         LINE#         37
+  C:02D9H         LINE#         38
+  C:02DCH         LINE#         39
+  C:02E3H         LINE#         40
+  C:02E5H         LINE#         41
+  C:02ECH         LINE#         42
+  C:02EEH         LINE#         43
+  C:02F5H         LINE#         45
+  C:02F8H         LINE#         46
+  C:02F8H         LINE#         47
+  C:0303H         LINE#         48
+  C:0305H         LINE#         49
+  C:030CH         LINE#         50
+  C:030EH         LINE#         51
+  C:0315H         LINE#         52
+  C:0320H         LINE#         53
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/10/2017  14:06:31  PAGE 8
+
+
+  C:0327H         LINE#         54
+  C:0330H         LINE#         56
+  C:0342H         LINE#         57
+  C:0344H         LINE#         59
+  C:0347H         LINE#         62
+  -------         ENDPROC       _XPT2046_READDATA
+  -------         ENDMOD        XPT2046
+
+  -------         MODULE        ?C?UIDIV
+  C:019DH         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+  -------         MODULE        ?C?ULDIV
+  C:022EH         PUBLIC        ?C?ULDIV
+  -------         ENDMOD        ?C?ULDIV
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CH554UART0ALTER?DEBUG
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CH554UART0RCVBYTE?DEBUG
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?UART1SETUP?DEBUG
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?CH554UART1RCVBYTE?DEBUG
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_CH554UART1SENDBYTE?DEBUG
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_CH554WDTMODESELECT?DEBUG
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_CH554WDTFEED?DEBUG
+
+Program Size: data=21.0 xdata=0 code=1168
+LINK/LOCATE RUN COMPLETE.  7 WARNING(S),  0 ERROR(S)

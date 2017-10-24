@@ -1,0 +1,81 @@
+/********************************** (C) COPYRIGHT *******************************
+* File Name          : FLASH_IC.C
+* Author             : MJX
+* Version            : V1.00
+* Date               : 2017/04/27
+* Description        : FLASH Read
+*******************************************************************************/
+
+
+
+/*******************************************************************************
+* configure information:
+* Name			Address			Data
+* x_resolution  0xc000 0xc002
+* y_resolution  0xc004 0xc006
+* x_mirror		0xc000 bit7
+* y_mirror	    0xc004 bit7
+*******************************************************************************/
+
+/******************************************************************************/
+/* 头文件包含 */
+#include "intrins.h"
+#include <stdio.h>
+#include "CH554.H"																
+#include "DEBUG.H"
+#include "FLASH_IC.H"
+#include "GT911.H"
+
+UINT8 Flash_Data[FLASH_DATA_LEN-1];
+/* Get flash info */
+UINT8 Get_Config_Info( void )			
+{
+	UINT8 i;
+    ROM_ADDR_H = DATA_FLASH_ADDR >> 8;
+    
+    for(i=0; i<FLASH_DATA_LEN; i++)
+	{
+		ROM_ADDR_L = i*2;                                                 
+	  	ROM_CTRL = ROM_CMD_READ;
+//     if ( ROM_STATUS & bROM_CMD_ERR ) return( 0xFF );                        // unknown command
+	  	*(Flash_Data+i) = ROM_DATA_L;
+	
+	}
+#if 0
+	for(i=0; i<FLASH_DATA_LEN; i++)
+	{
+		printf("%02x\t",(UINT16)Flash_Data[i]);
+	}
+	printf("\n");
+#endif 
+	
+//	if( ( Flash_Data[0] == 0x00 )||( Flash_Data[0]==0xff ) )									/* default config info */
+//	{
+//		FT5206_Info.x_max_pos = 1024;
+//		FT5206_Info.y_max_pos = 800;
+//		FT5206_Info.x_mirror = 0;
+//		FT5206_Info.y_mirror = 0;
+//		return 0;
+//	}
+//	else
+	{
+		if( ( Flash_Data[0]&0x80 )!= 0 ) 
+		{
+			GT911_Info.x_mirror = 1;
+			Flash_Data[0] &= ~0x7F;
+		}
+		if( ( Flash_Data[2]&0x80 )!= 0 ) 
+		{
+			GT911_Info.y_mirror = 1;
+			Flash_Data[2] &= ~0x7F;
+		}
+		
+		GT911_Info.x_max_pos = ( Flash_Data[0]<<8 ) + Flash_Data[1];
+		GT911_Info.y_max_pos = ( Flash_Data[2]<<8 ) + Flash_Data[3];
+		
+		GT911_Info.x_y_swap = ( Flash_Data[4] == 0x01) ? 1 : 0;
+
+		return 1;
+	}
+}
+

@@ -1,0 +1,71 @@
+C51 COMPILER V9.52.0.0   MAIN                                                              09/13/2017 11:46:39 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN MAIN.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE MAIN.C LARGE OPTIMIZE(9,SPEED) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /********************************** (C) COPYRIGHT *******************************
+   2          * File Name          : MAIN.C
+   3          * Author             : RZ
+   4          * Version            : V1.00
+   5          * Date               : 2017-5-16
+   6          * Description        : Ä£Äâ¶àµã´¥¿ØÉè±¸
+   7          *******************************************************************************/
+   8          #include "CH554.H"
+   9          #include "FT5206.H"
+  10          #include "DEBUG.H"
+  11          #include "DEVICE.H"
+  12          #include <stdio.h>
+  13          /*******************************************************************************
+  14          * Function Name  : main
+  15          * Description    :
+  16          * Input          : None
+  17          * Output         : None
+  18          * Return         : None
+  19          *******************************************************************************/
+  20          void main( void )
+  21          {
+  22   1          CfgFsys( );                                                                 /* CH559Ê±ÖÓÑ¡ÔñÅäÖÃ */
+  23   1          mDelaymS(5);                                                                /* ÐÞ¸ÄÖ÷ÆµµÈ´ýÄÚ²¿¾§ÕñÎÈ¶¨,±Ø¼
+             -Ó */
+  24   1          mInitSTDIO( );                                                              /* ´®¿Ú0³õÊ¼»¯ */
+  25   1      #if DE_PRINTF
+                  printf("CH554_HID_TP_V100 DEBUG\n DEBUG_DATA: "__DATE__""__TIME__" \n");
+              #endif  
+  28   1              
+  29   1          USBDeviceInit();                                                            /* USBÉè±¸Ä£Ê½³õÊ¼»¯ */
+  30   1      
+  31   1              FT5206_Init();
+  32   1          UEP1_T_LEN = 0;                                                             /* Ô¤Ê¹ÓÃ·¢ËÍ³¤¶ÈÒ»¶¨ÒªÇå¿Õ */
+  33   1          UEP2_T_LEN = 0;                                                             /* Ô¤Ê¹ÓÃ·¢ËÍ³¤¶ÈÒ»¶¨ÒªÇå¿Õ */
+  34   1                      
+  35   1      //      EX0 = 1;
+  36   1              IT0 = 1;
+  37   1              EA = 1;                                                                 /* ÔÊÐíµ¥Æ¬»úÖÐ¶Ï */
+  38   1              CH554WDTModeSelect(1);
+  39   1          while(1)
+  40   1          {
+  41   2                      CH554WDTFeed(0);
+  42   2                      FT5206_Touch_Check();
+  43   2      //              FT5206_Scan(Mode);
+  44   2          }
+  45   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     43    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+C51 COMPILER V9.52.0.0   MAIN                                                              09/13/2017 11:46:39 PAGE 2   
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

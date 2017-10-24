@@ -1,0 +1,313 @@
+C51 COMPILER V9.52.0.0   FT5206                                                            09/13/2017 11:46:39 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE FT5206
+OBJECT MODULE PLACED IN FT5206.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE FT5206.C LARGE OPTIMIZE(9,SPEED) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /********************************** (C) COPYRIGHT *******************************
+   2          * File Name          : FT5206.C
+   3          * Author             : RZ
+   4          * Version            : V1.00
+   5          * Date               : 2017-5-15 
+   6          * Description        : 电容触摸IC触摸IC驱动
+   7          *******************************************************************************/
+   8          
+   9          #include "FT5206.H"
+  10          #include "FLASH_IC.H"
+  11          #include "IIC.H"
+  12          #include "DEBUG.H"
+  13          #include "DEVICE.H"
+  14          #include <stdio.h>
+  15          #include <string.h>
+  16          
+  17          sbit            LED_IO                  =               P1^3;
+  18          //sbit          FT5206_RST_PIN  =               P1^2;
+  19          //sbit          FT5206_INT_PIN  =               P3^2;
+  20          
+  21          #define         FT5206_RST( x )                         ( FT5206_RST_PIN = x )
+  22          #define         FT5206_INT( x )                         ( FT5206_INT_PIN = x )
+  23          #define         FT5206_INT_DAT( )                       ( FT5206_INT_PIN )
+  24          
+  25          const UINT16 FT5206_TPX_TBL[5] =
+  26          {
+  27                  DEF_FT_TP1_REG,
+  28                  DEF_FT_TP2_REG,
+  29                  DEF_FT_TP3_REG,
+  30                  DEF_FT_TP4_REG,
+  31                  DEF_FT_TP5_REG
+  32          };
+  33          
+  34          POINTER                 TP[POINTER_NUM]         =               {0};
+  35          _FT5206_Info    FT5206_Info             =               {0};
+  36          
+  37          /*******************************************************************************
+  38          * Function Name  : FT5206_WR_Reg
+  39          * Description    : 向FT5206写入一次数据
+  40                             reg:起始寄存器地址
+  41                             buf:数据缓缓存区
+  42                             len:写数据长度
+  43                             返回值:0,成功;1,失败.
+  44          * Input          : UINT16 Addr ,UINT8 dat
+  45          * Output         : None
+  46          * Return         : bit
+  47          *******************************************************************************/
+  48          UINT8 FT5206_WR_Reg(UINT16 reg,UINT8 *buf,UINT8 len)
+  49          {
+  50   1              UINT8 i;
+  51   1              UINT8 ret=0;
+  52   1              IIC_Start();     
+  53   1              IIC_Send_Byte(FT_CMD_WR); 
+  54   1              IIC_Wait_Ack(); 
+  55   1              IIC_Send_Byte(reg&0XFF); 
+C51 COMPILER V9.52.0.0   FT5206                                                            09/13/2017 11:46:39 PAGE 2   
+
+  56   1              IIC_Wait_Ack(); 
+  57   1              for(i=0;i<len;i++)
+  58   1              { 
+  59   2              IIC_Send_Byte(buf[i]); 
+  60   2                      ret=IIC_Wait_Ack();
+  61   2                      if(ret)break; 
+  62   2              }
+  63   1          IIC_Stop(); 
+  64   1              return ret; 
+  65   1      }
+  66          /*******************************************************************************
+  67          * Function Name  : FT5206_RD_Reg
+  68          * Description    : 从FT5206读出一次数据
+  69                             reg:起始寄存器地址
+  70                             buf:数据缓缓存区
+  71                             len:读数据长度                        
+  72          * Input          : UINT16 reg,
+  73                                             UINT8 *buf,
+  74                                             UINT8 len
+  75          * Output         : None
+  76          * Return         : None
+  77          *******************************************************************************/
+  78          void FT5206_RD_Reg(UINT16 reg,UINT8 *buf,UINT8 len)
+  79          {
+  80   1              UINT8 i; 
+  81   1              IIC_Start();    
+  82   1              IIC_Send_Byte(FT_CMD_WR);       //发送写命令     
+  83   1              IIC_Wait_Ack();                                                                                                            
+  84   1              IIC_Send_Byte(reg&0XFF);        //发送低8位地址
+  85   1              IIC_Wait_Ack();  
+  86   1              IIC_Start();               
+  87   1              IIC_Send_Byte(FT_CMD_RD);       //发送读命令               
+  88   1              IIC_Wait_Ack();    
+  89   1              for(i=0;i<len;i++)
+  90   1              {          
+  91   2              buf[i]=IIC_Read_Byte(i==(len-1)?0:1); //发数据    
+  92   2              } 
+  93   1          IIC_Stop();//产生一个停止条件     
+  94   1      } 
+  95          
+  96          
+  97          
+  98          /*******************************************************************************
+  99          * Function Name  : FT5206_Init
+ 100          * Description    : 初始化FT5206触摸屏
+ 101                             返回值:0,初始化成功;1,初始化失败 
+ 102          * Input          : None
+ 103          * Output         : None
+ 104          * Return         : UINT8
+ 105          *******************************************************************************/
+ 106          UINT8 FT5206_Init(void)
+ 107          {
+ 108   1              UINT8 temp[2];
+ 109   1              FT5206_RST(0);                          //复位
+ 110   1              mDelaymS(20);
+ 111   1              FT5206_RST(1);                          //释放复位                  
+ 112   1              mDelaymS(50);
+ 113   1      
+ 114   1              LED_IO = 0;
+ 115   1      
+ 116   1      #if 0
+                      temp[0]=0;
+C51 COMPILER V9.52.0.0   FT5206                                                            09/13/2017 11:46:39 PAGE 3   
+
+                      FT5206_WR_Reg(DEF_FT_DEVIDE_MODE,temp,1);       //进入正常操作模式 
+                      temp[0]=0;
+                      FT5206_WR_Reg(DEF_FT_ID_G_MODE,temp,1);         //查询模式 
+                      temp[0]=12;                                                             //触摸有效值，22，越小越灵敏    
+                      FT5206_WR_Reg(DEF_FT_ID_G_THGROUP,temp,1);      //设置触摸有效值
+                      temp[0]=12;                                                             //激活周期，不能小于12，最大14
+                      FT5206_WR_Reg(DEF_FT_ID_G_PERIODACTIVE,temp,1); 
+                      //读取版本号，参考值：0x3003
+                      FT5206_RD_Reg(DEF_FT_ID_G_LIB_VERSION,&temp[0],2);  
+                      if(temp[0]==0X30&&temp[1]==0X03)//版本:0X3003
+                      {
+              #if DE_PRINTF           
+                              printf("CTP ID:%x\r\n",((UINT16)temp[0]<<8)+temp[1]);
+                              FT5206_RD_Reg(0xA8,&temp[0],1); 
+                              printf("A8h:0x%02x\r\n",((UINT16)temp[0]));//0x82
+                              FT5206_RD_Reg(0xA6,&temp[0],1); 
+                              printf("A6h:0x%02x\r\n",((UINT16)temp[0]));//0x17 
+                              FT5206_RD_Reg(0xA8,&temp[0],1); 
+                              printf("A2h:0x%02x\r\n",((UINT16)temp[0]));//0x01 
+                              FT5206_RD_Reg(0xA3,&temp[0],1);
+                              printf("A3h:0x%02x\r\n",((UINT16)temp[0]));//0x54  
+                              FT5206_RD_Reg(0x01,&temp[0],1); 
+                              printf("01h:0x%02x\r\n",((UINT16)temp[0]));//0xff
+                              FT5206_RD_Reg(0x02,&temp[0],1);
+                              printf("0x02:0x%02x\r\n",((UINT16)temp[0]));//
+              #endif          
+                              return 0;
+                      }
+              #endif
+ 147   1              Get_Config_Info();
+ 148   1              FT5206_Info.X_Resolution = 2048 / (double)FT5206_Info.x_max_pos;
+ 149   1              FT5206_Info.Y_Resolution = 2048 / (double)FT5206_Info.y_max_pos;
+ 150   1              return 1;
+ 151   1      }
+*** WARNING C280 IN LINE 108 OF FT5206.C: 'temp': unreferenced local variable
+ 152          
+ 153          UINT8 SerialData[10] = { 
+ 154                  0X54, 0X55,                                             /* start */
+ 155                  0X00,0X00,0X00,0X00,0X00,               /* pos */
+ 156                  0X0FF,0X00,                                             /* end */
+ 157                  0X00};                                                  /* check out */         
+ 158          
+ 159          /*******************************************************************************
+ 160          * Function Name  : FT5206_Scan
+ 161          * Description    : 扫描触摸屏(采用查询方式)
+ 162          * Input          : None
+ 163          * Output         : None
+ 164          * Return         : None
+ 165          *******************************************************************************/
+ 166          void FT5206_Scan( void )
+ 167          {
+ 168   1              UINT8 mode;
+ 169   1              UINT8 buf[4];
+ 170   1              UINT8 i=0;
+ 171   1              
+ 172   1              FT5206_RD_Reg(DEF_FT_REG_NUM_FINGER,&mode,1);//读取触摸点的状态  
+ 173   1              FT5206_Info.Point_Num = mode;
+ 174   1      #if DE_PRINTF   
+                      printf("Point_Num:%d\n",(UINT16)FT5206_Info.Point_Num);
+              #endif
+ 177   1              for( i=0; i < POINTER_NUM; i++)
+ 178   1              {
+C51 COMPILER V9.52.0.0   FT5206                                                            09/13/2017 11:46:39 PAGE 4   
+
+ 179   2                      FT5206_RD_Reg( FT5206_TPX_TBL[i], buf, 4 );     //读取XY坐标值 
+ 180   2                      
+ 181   2                      TP[i].Tip_Switch = ( ( buf[0] & 0XF0 ) != 0x80 ) ? 0 : 1;
+ 182   2                      if( FT5206_Info.Point_Num == 0 )
+ 183   2                      {
+ 184   3                              continue;
+ 185   3                      }
+ 186   2                      if( ( TP[i].Tip_Switch != 0 ) || ( i == 0 ) )
+ 187   2                      {
+ 188   3                              TP[i].Contact_Identifier = i;
+ 189   3      
+ 190   3                              if( FT5206_Info.x_y_swap == 1 )
+ 191   3                              {                       
+ 192   4                                      TP[i].Y_pos = ( ( (UINT16)( buf[2] & 0X0F ) << 8 ) + buf[3] ) * FT5206_Info.X_Resolution;
+ 193   4                                      TP[i].X_pos = ( ( (UINT16)( buf[0] & 0X0F ) << 8 ) + buf[1] ) * FT5206_Info.Y_Resolution;
+ 194   4                              }
+ 195   3                              else
+ 196   3                              {
+ 197   4                                      TP[i].X_pos = ( ( (UINT16)( buf[2] & 0X0F ) << 8 ) + buf[3] ) * FT5206_Info.X_Resolution;
+ 198   4                                      TP[i].Y_pos = ( ( (UINT16)( buf[0] & 0X0F ) << 8 ) + buf[1] ) * FT5206_Info.Y_Resolution;
+ 199   4              
+ 200   4                              }
+ 201   3                              if ( FT5206_Info.x_mirror == 1 )
+ 202   3                              {
+ 203   4                                      TP[i].X_pos = 2048 - TP[i].X_pos;
+ 204   4                              }
+ 205   3                              
+ 206   3                              
+ 207   3                              if ( FT5206_Info.y_mirror == 1 )
+ 208   3                              {
+ 209   4                                      TP[i].Y_pos = 2048 - TP[i].Y_pos;
+ 210   4                              }               
+ 211   3                              
+ 212   3                              TP[i].Resolution_Multi = 0x0030;
+ 213   3                      }
+ 214   2                      else
+ 215   2                      {
+ 216   3                              TP[i].Contact_Identifier = 0;
+ 217   3                              TP[i].Y_pos = 0;
+ 218   3                              TP[i].X_pos = 0;
+ 219   3                              TP[i].Resolution_Multi = 0;
+ 220   3                      }
+ 221   2                      
+ 222   2      #if DE_PRINTF
+                              printf("buf[%d]:%02x\n",(UINT16)i,(UINT16)(buf[0]));
+                                      printf("TP[%d].Tip_Switch:%02d\tTP[%d].Contact:%02d\n",
+                                              (UINT16)i,(UINT16)TP[i].Tip_Switch,(UINT16)i,(UINT16)TP[i].Contact_Identifier);                                 
+                                      printf("TP[%d].X_pos:%d\tTP[%d].Y_pos:%d\t\n",
+                                      (UINT16)i,(UINT16)TP[i].X_pos,(UINT16)i,(UINT16)TP[i].Y_pos );
+              
+              #endif
+ 230   2              }
+ 231   1      
+ 232   1      }
+ 233          
+ 234          /*******************************************************************************
+ 235          * Function Name  : FT5206_Touch_Check
+ 236          * Description    : 按键检测与上传
+ 237          * Input          : None
+ 238          * Output         : None
+ 239          * Return         : None
+ 240          *******************************************************************************/
+C51 COMPILER V9.52.0.0   FT5206                                                            09/13/2017 11:46:39 PAGE 5   
+
+ 241          UINT8 FT5206_Touch_Check( void )
+ 242          {
+ 243   1              static UINT8 t;
+ 244   1              if( FT5206_Info.IRQ_Flag == 1 )
+ 245   1              {
+ 246   2                      FT5206_Info.IRQ_Flag = 0;               
+ 247   2                      
+ 248   2                      FT5206_Scan();
+ 249   2                      Absolute_Up_Pack( &TP, FT5206_Info.Point_Num );
+ 250   2                      
+ 251   2                      EX0 = 1;
+ 252   2                      if( t++ > 10  )
+ 253   2                      {
+ 254   3                              t = 0;
+ 255   3                              LED_IO ^= 1;
+ 256   3                      }
+ 257   2                      
+ 258   2              }
+ 259   1      //      else
+ 260   1      //      {
+ 261   1      //              LED_IO = 0;
+ 262   1      //      }
+ 263   1              return 0;
+ 264   1      }
+ 265          
+ 266          /*******************************************************************************
+ 267          * Function Name  : FT5206_ISR
+ 268          * Description    : 外部中断0
+ 269          * Input          : None
+ 270          * Output         : None
+ 271          * Return         : None
+ 272          *******************************************************************************/
+ 273          void    FT5206_ISR( void ) interrupt INT_NO_INT0 using 1                    //USB中断服务程序,使用寄存器组
+             -1
+ 274          {
+ 275   1              EX0 = 0;
+ 276   1              FT5206_Info.IRQ_Flag = 1;
+ 277   1      //      printf("INT\n");
+ 278   1      }
+ 279          
+ 280          /* END OF FILE */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    828    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     78      23
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

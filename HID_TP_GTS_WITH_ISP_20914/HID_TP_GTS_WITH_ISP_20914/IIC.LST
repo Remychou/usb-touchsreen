@@ -1,0 +1,255 @@
+C51 COMPILER V9.52.0.0   IIC                                                               10/23/2017 14:51:54 PAGE 1   
+
+
+C51 COMPILER V9.52.0.0, COMPILATION OF MODULE IIC
+OBJECT MODULE PLACED IN IIC.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE IIC.C LARGE BROWSE DEBUG OBJECTEXTEND PREPRINT
+
+line level    source
+
+   1          /********************************** (C) COPYRIGHT *******************************
+   2          * File Name          : IIC.C
+   3          * Author             : RZ
+   4          * Version            : V1.00
+   5          * Date               : 2017-5-15
+   6          * Description        : Interface of I2C
+   7          *******************************************************************************/#include <intrins.h>
+   8          #include <stdio.h>
+   9          #include "CH554.H"
+  10          #include "DEBUG.H"
+  11          
+  12          #define         HAS_PU                  (1)
+  13          #define         DEBUG_IIC               (0)
+  14          /* 器件硬件连线定义 */
+  15          sbit  IIC_SCL=P1^4;                                     /*模拟I2C时钟控制位*/
+  16          sbit  IIC_SDA=P1^5;                                     /*模拟I2C数据传送位*/
+  17          
+  18          
+  19          
+  20          /* 常,变量定义区 */                                            
+  21          bit  bACK;                                                              /*应答标志位*/
+  22          bit      iic_speed_control = 1;                                         /*IIC速度控制位*/
+  23          
+  24          /*延时子程序*/
+  25          /*延时指定微秒时间*/                                            /* 晶振频率<24MHZ) */  
+  26          #define         DELAY5uS()              mDelayuS(5)             /* 适当增减延时来改变IIC速度 */
+  27          #define         DELAY2uS()              mDelayuS(2)                     /* 400K */ 
+  28          #define         IIC_READ                (0X01)
+  29          #define         IIC_WRITE               (0X00)
+  30          /*100K DELAY5 增加_nop_();到20个*/
+  31          /*100K DELAY2 增加_nop_();到10个*/
+  32          
+  33          
+  34          /*******************************以下为IIC器件操作常用子函数***********************************************
+             -**********************/
+  35          void I2c_Init( void )
+  36          {
+  37   1              #if HAS_PU
+  38   1              return;
+  39   1              #endif
+  40   1               P1_MOD_OC |= BIT4 + BIT5;
+  41   1               P1_DIR_PU |= BIT4 + BIT5;
+  42   1               P1 |= BIT4 + BIT5;
+  43   1      }
+  44          
+  45          static void I2c_SDA_Out( void )
+  46          {
+  47   1              #if HAS_PU
+  48   1              return;
+  49   1              #endif
+  50   1               P1_MOD_OC |= BIT5;
+  51   1               P1_DIR_PU |= BIT5;
+  52   1      }
+  53          
+  54          static void I2c_SDA_In( void )
+C51 COMPILER V9.52.0.0   IIC                                                               10/23/2017 14:51:54 PAGE 2   
+
+  55          {
+  56   1              #if HAS_PU
+  57   1              return;
+  58   1              #endif  
+  59   1               P1_MOD_OC &= ~BIT5;
+  60   1               P1_DIR_PU &= ~BIT5;
+  61   1      }
+  62          /*******************************************************************************
+  63          * Function Name  : IIC_Start
+  64          * Description    :
+  65          * Input          : None
+  66          * Output         : None
+  67          * Return         : None
+  68          **********************************************************************************************************
+             -*********************/
+  69          void IIC_Start( void )
+  70          {
+  71   1              I2c_SDA_Out();
+  72   1              IIC_SDA=1;                
+  73   1              IIC_SCL=1;
+  74   1              mDelayuS(5);
+  75   1              IIC_SDA=0;//START:when CLK is high,DATA change form high to low 
+  76   1              DELAY2uS();
+  77   1              IIC_SCL=0;//钳住I2C总线，准备发送或接收数据 
+  78   1      }
+  79          
+  80          /*******************************************************************************
+  81          * Function Name  : IIC_Stop
+  82          * Description    :
+  83          * Input          : None
+  84          * Output         : None
+  85          * Return         : None
+  86          *******************************************************************************/
+  87          void IIC_Stop( void )
+  88          {
+  89   1              I2c_SDA_Out();
+  90   1              IIC_SCL=1;
+  91   1              DELAY2uS();
+  92   1              IIC_SDA=0;//STOP:when CLK is high DATA change form low to high
+  93   1              DELAY2uS();
+  94   1              IIC_SDA=1;//发送I2C总线结束信号  
+  95   1      }
+  96          
+  97          /*******************************************************************************
+  98          * Function Name  : Ack_I2c
+  99          * Description    :
+ 100          * Input          : None
+ 101          * Output         : None
+ 102          * Return         : None
+ 103          *******************************************************************************/
+ 104          void IIC_Ack( void )
+ 105          {
+ 106   1              I2c_SDA_Out();
+ 107   1              IIC_SCL=0;
+ 108   1              DELAY2uS();
+ 109   1              IIC_SDA=0;
+ 110   1              DELAY2uS();
+ 111   1              IIC_SCL=1;
+ 112   1              DELAY2uS();     
+ 113   1              IIC_SCL=0;
+ 114   1              I2c_SDA_In();
+ 115   1              IIC_SDA=1;      
+C51 COMPILER V9.52.0.0   IIC                                                               10/23/2017 14:51:54 PAGE 3   
+
+ 116   1      }
+ 117          
+ 118          /*******************************************************************************
+ 119          * Function Name  : Nack_I2c
+ 120          * Description    :
+ 121          * Input          : None
+ 122          * Output         : None
+ 123          * Return         : None
+ 124          *******************************************************************************/
+ 125          void IIC_Nack(void)
+ 126          {
+ 127   1              I2c_SDA_Out();
+ 128   1              IIC_SCL=0;
+ 129   1              DELAY2uS();
+ 130   1              IIC_SDA=1;
+ 131   1              DELAY2uS();
+ 132   1              IIC_SCL=1;
+ 133   1              DELAY2uS();
+ 134   1              IIC_SCL=0;
+ 135   1              I2c_SDA_In();
+ 136   1      }                       
+ 137          /*******************************************************************************
+ 138          * Function Name  : Ack_I2c
+ 139          * Description    :等待应答信号到来
+ 140                                            返回值：1，接收应答失败
+ 141                                                        0，接收应答成功
+ 142          * Input          : None
+ 143          * Output         : None
+ 144          * Return         : None
+ 145          *******************************************************************************/
+ 146          UINT8 IIC_Wait_Ack(void)
+ 147          {
+ 148   1              UINT8 ucErrTime=0;
+ 149   1              IIC_SDA=1;         
+ 150   1              IIC_SCL=1;
+ 151   1              I2c_SDA_In();
+ 152   1              DELAY2uS();
+ 153   1              while(IIC_SDA)
+ 154   1              {
+ 155   2                      ucErrTime++;
+ 156   2                      if(ucErrTime>250)
+ 157   2                      {
+ 158   3                              IIC_Stop();
+ 159   3                              return 1;
+ 160   3                      }
+ 161   2                      mDelayuS(1);
+ 162   2              }
+ 163   1              IIC_SCL=0;//时钟输出0      
+ 164   1              return 0;  
+ 165   1      } 
+ 166          /*******************************************************************************
+ 167          * Function Name  : IIC_Send_Byte
+ 168          * Description    :
+ 169          * Input          : UINT8 c
+ 170          * Output         : None
+ 171          * Return         : None
+ 172          *******************************************************************************/
+ 173          void  IIC_Send_Byte(UINT8 txd)
+ 174          {
+ 175   1          UINT8 t;   
+ 176   1          IIC_SCL=0;//拉低时钟开始数据传输
+ 177   1              I2c_SDA_Out();
+C51 COMPILER V9.52.0.0   IIC                                                               10/23/2017 14:51:54 PAGE 4   
+
+ 178   1              DELAY2uS();
+ 179   1              for(t=0;t<8;t++)
+ 180   1          {              
+ 181   2              IIC_SDA=(txd&0x80)>>7;
+ 182   2              txd<<=1;              
+ 183   2                      IIC_SCL=1; 
+ 184   2                      DELAY2uS();
+ 185   2                      if( t == 7 )
+ 186   2                      {
+ 187   3                              I2c_SDA_In();
+ 188   3                      }
+ 189   2                      IIC_SCL=0;      
+ 190   2                      DELAY2uS();
+ 191   2          }    
+ 192   1          
+ 193   1      }
+ 194          
+ 195          /*******************************************************************************
+ 196          * Function Name  : IIC_Read_Byte
+ 197          * Description    :
+ 198          * Input          : None
+ 199          * Output         : None
+ 200          * Return         : UINT8
+ 201          *******************************************************************************/
+ 202          UINT8  IIC_Read_Byte(UINT8 ack)
+ 203          {
+ 204   1              UINT8 i,receive=0;
+ 205   1              mDelayuS(30);
+ 206   1              I2c_SDA_In();
+ 207   1              for(i=0;i<8;i++ )
+ 208   1              { 
+ 209   2                      IIC_SCL=0;                 
+ 210   2                      DELAY2uS();
+ 211   2                      IIC_SCL=1;       
+ 212   2                      receive<<=1;
+ 213   2                      if(IIC_SDA)
+ 214   2                              receive++;   
+ 215   2              }
+ 216   1              if (!ack)
+ 217   1                      IIC_Nack();//发送nACK
+ 218   1              else 
+ 219   1                      IIC_Ack(); //发送ACK   
+ 220   1              return receive;
+ 221   1      }
+*** WARNING C294 IN LINE 40 OF IIC.C: unreachable code
+*** WARNING C294 IN LINE 50 OF IIC.C: unreachable code
+*** WARNING C294 IN LINE 59 OF IIC.C: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    343    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  3 WARNING(S),  0 ERROR(S)

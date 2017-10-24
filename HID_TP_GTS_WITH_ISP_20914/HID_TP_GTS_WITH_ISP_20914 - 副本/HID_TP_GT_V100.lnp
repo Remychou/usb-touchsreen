@@ -1,0 +1,8 @@
+"Debug.obj",
+"DEVICE.obj",
+"IIC.obj",
+"MAIN.obj",
+"GT911.obj",
+"FLASH_IC.obj" 
+TO "HID_TP_GT_V100" 
+RAMSIZE(256) 

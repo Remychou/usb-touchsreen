@@ -1,0 +1,8 @@
+"Debug.obj",
+"DEVICE.obj",
+"IIC.obj",
+"MAIN.obj",
+"FT5206.obj",
+"FLASH_IC.obj" 
+TO "HID_TP_CY_V100" 
+RAMSIZE(256) 

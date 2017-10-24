@@ -1,0 +1,29 @@
+/******************** (C) COPYRIGHT 2009 WCH ***********************************
+* File Name          : FLASH_IC.H
+* Author             : RZ
+* Version            : V1.00
+* Date               : 2017/04/27
+* Description        :
+*******************************************************************************/
+
+
+
+#ifndef __FLASH_IC_H
+#define __FLASH_IC_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define	FLASH_DATA_LEN 	4
+#define	FLASH_DATA_ADDR	0X0000
+
+extern UINT8 Flash_Data[FLASH_DATA_LEN];
+extern UINT8 Get_Config_Info( void );
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+/******************* (C) COPYRIGHT 2008 WCH*********************END OF FILE****/

@@ -1,0 +1,6 @@
+".\obj\DEBUG.obj",
+".\obj\main.obj",
+".\obj\XPT2046.obj",
+".\obj\DEVICE.obj" 
+TO ".\obj\TP_CTL_XPT" 
+NOPRINT

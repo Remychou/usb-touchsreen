@@ -1,0 +1,12 @@
+SET C51INC=C:\Keil\C51\Inc;C:\Keil\C51\Inc\Atmel
+SET C51LIB=C:\Keil\C51\Lib
+SET CPU_TYPE=AT89C51
+SET CPU_VENDOR=Atmel
+SET UV2_TARGET=Target 1
+SET CPU_XTAL=0x016E3600
+"C:\Keil\C51\BIN\C51.EXE" @.\obj\DEBUG.__i
+"C:\Keil\C51\BIN\C51.EXE" @.\obj\main.__i
+"C:\Keil\C51\BIN\C51.EXE" @.\obj\XPT2046.__i
+"C:\Keil\C51\BIN\C51.EXE" @.\obj\DEVICE.__i
+"C:\Keil\C51\BIN\BL51.EXE" @.\obj\TP_CTL~1.LNP
+"C:\Keil\C51\BIN\OH51.EXE" ".\obj\TP_CTL_XPT" 
